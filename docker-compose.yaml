@@ -1,0 +1,47 @@
+# versão do Docker Compose;
+version: "3"
+# definição dos serviços à serem criados/levantados;
+services:
+  # nome do serviço (Apache NiFi);
+  nifi:
+    # nome do container;
+    container_name: nifi
+    # imagem à ser executada dentro do container;
+    image: apache/nifi:latest
+    # definição de link dentre portas do container e portar do máquina;
+    ports:
+        # a porta 8443 é onde acessamos a interface web do NiFi;
+      - "8443:8443"
+        # a porta 9998 é onde faremos as requisições;
+      - "9998:9998"
+    # definição de variáveis de ambiente;
+    environment:
+        # define um usuário, padrão de acordo com a última versão da imagem do NiFi;
+      - SINGLE_USER_CREDENTIALS_USERNAME=admin
+        # define uma senha, padrão de acordo com a última versão da imagem do NiFi;
+      - SINGLE_USER_CREDENTIALS_PASSWORD=SEnhaNIFI@2022!
+    # especificação de volumes (armazenamento compartilhado/persistência de dados/etc);
+    volumes:
+        # caminho para configuração do volume (caminhoHost:caminhoContainer);
+      - D:\nifivolume:/opt/nifi/nifi-current/drivers
+  db:
+    # nome do container;
+    container_name: mysql
+    # imagem à ser executada dentro do container;
+    image: mysql
+    # definição de link dentre portas do container e portar do máquina;
+    ports:
+      - 3306:3306
+    # comando à ser executado durante a criação do container;
+    command: --default-authentication-plugin=mysql_native_password
+    # especificação de reinicialização em caso de falhas/quedas (sempre);
+    restart: always
+    # definição de variáveis de ambiente;
+    environment:
+      # definição de senha para usuário root;
+      MYSQL_ROOT_PASSWORD: testenifi
+    # especificação de volumes (armazenamento compartilhado/persistência de dados/etc);
+    volumes:
+        # caminho para configuração do volume (caminhoHost:caminhoContainer);
+      - D:\mysqlvolume:/var/lib/mysql
+
